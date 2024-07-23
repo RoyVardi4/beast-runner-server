@@ -1,5 +1,6 @@
 import { Content, GenerationConfig, GoogleGenerativeAI } from '@google/generative-ai';
 import schema from '../ai_schema/workoutPlanGenerator';
+import { addTrainingPlan } from './dbConnection';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_TOKEN ?? '');
 
@@ -24,7 +25,7 @@ export const geminiChat = async (prompt: string, history?: Content[]) => {
   });
 
   const result = await chatSession.sendMessage(prompt);
-  console.log(result.response.text());
+  addTrainingPlan(JSON.parse(result.response.text()).plan);
 
   const response = result.response;
   const text = response.text();

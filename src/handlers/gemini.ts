@@ -19,9 +19,9 @@ export const getPlan = async (_req: Request, res: Response) => {
     months from now. Im a ${userFitnessData.gender}, 
     beginner runner, my weight is ${userFitnessData.weight} kg, 
     and my height is ${userFitnessData.height} cm. 
-    The plan should specify what to do in each day until the race`
-  
-
+    The plan should specify what to do in each day until the race.
+    create a training plan that starts from ${new Date()}`
+    
     const plan = await geminiChat(prompt)
     res.send(plan);
   }

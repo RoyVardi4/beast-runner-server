@@ -15,14 +15,14 @@ const schema = `
             "items": {
               "type": "object",
               "properties": {
-                "day": {
+                "date": {
                   "type": "string"
                 },
                 "workout": {
                   "type": "string"
                 }
               },
-              "required": ["day", "workout"]
+              "required": ["workout", "date"]
             }
           }
         },
@@ -34,4 +34,4 @@ const schema = `
 }
 `;
 
-export default schema
+export default schema;
