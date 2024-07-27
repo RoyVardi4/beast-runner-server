@@ -3,12 +3,18 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import http from 'http';
+import { connect } from 'mongoose';
 
-dotenv.config()
+dotenv.config();
 
 import { handleError } from './helpers/error';
 import httpLogger from './middlewares/httpLogger';
 import router from './routes';
+
+const DB_URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@beastrunner.gq6tmka.mongodb.net/beast_runner`;
+connect(DB_URI)
+  .then(() => console.info(`DB is connected successfully`))
+  .catch((e) => console.error(e));
 
 const app: express.Application = express();
 
@@ -53,11 +59,11 @@ function onError(error: { syscall: string; code: string }) {
   }
 }
 
-function onListening() {
+const onListening = () => {
   const addr = server.address();
   const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr?.port}`;
   console.info(`Server is listening on ${bind}`);
-}
+};
 
 server.listen(port);
 server.on('error', onError);

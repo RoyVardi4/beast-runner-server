@@ -24,9 +24,7 @@ export const geminiChat = async (prompt: string, history?: Content[]) => {
   });
 
   const result = await chatSession.sendMessage(prompt);
-  console.log(result.response.text());
-
-  const response = result.response;
-  const text = response.text();
-  return text;
+  const jsonResult = JSON.parse(result.response.text())
+  
+  return jsonResult
 };
