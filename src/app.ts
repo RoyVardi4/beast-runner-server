@@ -3,6 +3,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import http from 'http';
+import cors from 'cors';
 import { connect } from 'mongoose';
 
 dotenv.config();
@@ -19,6 +20,7 @@ connect(DB_URI)
 const app: express.Application = express();
 
 app.use(httpLogger);
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

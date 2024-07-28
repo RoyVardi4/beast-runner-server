@@ -4,8 +4,10 @@ import { geminiChat } from '../utils/gemini';
 import { UserFitnessData, Gender } from '../types/UserFitnessData';
 import WorkPlan from '../db_schema/workPlan';
 
-export const getPlan = async (_req: Request, res: Response) => {
-  logger.info('Server is starting');
+export const generatePlan = async (req: Request, res: Response) => {
+  logger.info('Gnerating plan...');
+
+  console.log(req.body);
 
   const userFitnessData: UserFitnessData = {
     age: 24,
