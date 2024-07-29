@@ -3,6 +3,7 @@ import logger from '../utils/logger';
 import { geminiChat } from '../utils/gemini';
 import { UserFitnessData, Gender } from '../types/UserFitnessData';
 import WorkPlan from '../db_schema/workPlan';
+import WorkoutPlan from '../db_schema/workPlan';
 
 export const generatePlan = async (req: Request, res: Response) => {
   logger.info('Gnerating plan...');
@@ -37,3 +38,24 @@ export const generatePlan = async (req: Request, res: Response) => {
     res.status(500).send(error);
   }
 };
+
+export const getPlan = async (_: Request, res: Response) => {
+  try {
+    return res.json(await WorkoutPlan.findOne({user_id: 'Roy'})); //todo insert here the real id
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+export const updatePlan = async (req: Request, res: Response) => {
+  logger.info('Updating plan...');
+  console.log(req.body);
+
+  try {
+    const plan = await WorkoutPlan.findOneAndUpdate({user_id: 'Roy'}, {plan: req.body}); //todo insert here the real id
+    return res.json(plan);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+
+}
