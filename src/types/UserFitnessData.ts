@@ -12,6 +12,12 @@ export interface UserFitnessData {
   heartPoints?: number;
 }
 
+export interface UserPreferences {
+  userRunningLevel?: string;
+  userRunningGoal?: string;
+  startDate?: Date;
+  endDate?: Date;
+}
 export interface Plan {
   plan: WeeklyPlan[];
 }
