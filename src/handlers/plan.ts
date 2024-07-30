@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import logger from '../utils/logger';
 import { geminiChat } from '../utils/gemini';
 import { UserFitnessData, Gender } from '../types/UserFitnessData';
-import WorkPlan from '../db_schema/workPlan';
 import WorkoutPlan from '../db_schema/workPlan';
 
 export const generatePlan = async (req: Request, res: Response) => {
@@ -27,7 +26,7 @@ export const generatePlan = async (req: Request, res: Response) => {
 
   const plan = (await geminiChat(prompt))?.plan;
   try {
-    const newPlan = new WorkPlan({
+    const newPlan = new WorkoutPlan({
       plan: plan,
       user_id: 'Roy', // TODO: change to actual user
       lut: new Date()
