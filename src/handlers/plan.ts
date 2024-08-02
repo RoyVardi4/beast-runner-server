@@ -3,6 +3,7 @@ import logger from '../utils/logger';
 import { geminiChat } from '../utils/gemini';
 import { UserFitnessData, UserPreferences } from '../types/UserFitnessData';
 import WorkoutPlan from '../db_schema/workPlan';
+import { formatDBDate } from '../utils/DateFormatter';
 
 interface PlanInput {
   userFitnessData: UserFitnessData;
@@ -68,6 +69,20 @@ export const updatePlan = async (req: Request, res: Response) => {
   try {
     const plan = await WorkoutPlan.findOneAndUpdate({ user_id: 'Roy' }, { plan: req.body.updatedPlan }, { new: true }); //todo insert here the real id
     return res.json(plan);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+export const getWorkout = async (req: Request, res: Response) => {
+  try {
+    return res.json(await WorkoutPlan.aggregate([
+      { $match: { user_id: 'Roy' } },
+      { $unwind: '$plan' },
+      { $unwind: '$plan.days' },
+      { $match: { 'plan.days.date': formatDBDate(new Date(req.query.date + '')) } },
+      { $project: { workout: '$plan.days.workout' } },
+    ]));
   } catch (error) {
     res.status(500).send(error);
   }
