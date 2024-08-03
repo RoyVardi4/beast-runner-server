@@ -10,6 +10,18 @@ const DaySchema = new Schema({
   workout: {
     type: String,
     required: true
+  },
+  difficultyFeedback: {
+    type: Number, // 1- Very easy, 5 - Very difficult
+    required: false
+  },
+  completedDistance: {
+    type: Number,
+    required: false
+  },
+  completedTime:{
+    type: Number,
+    required: false
   }
 });
 

@@ -55,7 +55,7 @@ export const generatePlan = async (req: Request, res: Response) => {
 
 export const getPlan = async (_: Request, res: Response) => {
   try {
-    return res.json(await WorkoutPlan.findOne({ user_id: 'Roy' })); //todo insert here the real id
+    return res.json(await WorkoutPlan.findOne({ user_id: 'Adi' })); //todo insert here the real id
   } catch (error) {
     res.status(500).send(error);
   }
@@ -66,7 +66,7 @@ export const updatePlan = async (req: Request, res: Response) => {
   console.log(req.body);
 
   try {
-    const plan = await WorkoutPlan.findOneAndUpdate({ user_id: 'Roy' }, { plan: req.body.updatedPlan }, { new: true }); //todo insert here the real id
+    const plan = await WorkoutPlan.findOneAndUpdate({ user_id: 'Adi' }, { plan: req.body.updatedPlan }, { new: true }); //todo insert here the real id
     return res.json(plan);
   } catch (error) {
     res.status(500).send(error);
