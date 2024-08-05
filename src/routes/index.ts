@@ -1,7 +1,7 @@
 import express from 'express';
 // import logger from '../utils/logger';
 import { generatePlan, getPlan, getWorkout, updatePlan } from '../handlers/plan';
-import { deleteNotification, getNotifications } from '../handlers/notifications';
+import { deleteNotification, getNotifications, getNotificationsNumber } from '../handlers/notifications';
 
 const router = express.Router();
 
@@ -14,10 +14,13 @@ router.get('/getPlan', getPlan); //todo need to get user id from the request via
 
 router.post('/updatePlan', updatePlan); //todo need to get user id from the request via authentication
 
-router.get('/getWorkout', getWorkout)
+router.get('/getWorkout', getWorkout) //todo need to get user id from the request via authentication
 
-router.get('/getNotifications', getNotifications)
+router.get('/getNotifications', getNotifications) //todo need to get user id from the request via authentication
+ 
+router.get('/deleteNotification', deleteNotification) //todo need to get user id from the request via authentication
 
-router.get('/deleteNotification', deleteNotification)
+router.get('/getNotificationsNumber', getNotificationsNumber) //todo need to get user id from the request via authentication
+
 
 export default router;
