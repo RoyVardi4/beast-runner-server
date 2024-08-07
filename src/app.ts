@@ -9,6 +9,7 @@ dotenv.config()
 import { handleError } from './helpers/error';
 import httpLogger from './middlewares/httpLogger';
 import router from './routes';
+import authRoute from "./routes/authRoute";
 
 const app: express.Application = express();
 
@@ -17,7 +18,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Methods", "*");
+//   res.header("Access-Control-Allow-Headers", "*");
+//   next();
+// })
+
 app.use('/', router);
+app.use("/auth", authRoute);
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {
