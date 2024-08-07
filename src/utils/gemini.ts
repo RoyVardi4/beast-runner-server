@@ -1,6 +1,6 @@
 import { Content, GenerationConfig, GoogleGenerativeAI } from '@google/generative-ai';
 import schema from '../ai_schema/workoutPlanGenerator';
-import { addTrainingPlan } from './dbConnection';
+import { Plan } from 'src/types/UserFitnessData';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_TOKEN ?? '');
 
@@ -13,7 +13,7 @@ const generationConfig: GenerationConfig = {
   responseSchema: JSON.parse(schema),
 };
 
-export const geminiChat = async (prompt: string, history?: Content[]) => {
+export const geminiChat = async (prompt: string, history?: Content[]):Promise<Plan> => {
   // The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
@@ -25,9 +25,7 @@ export const geminiChat = async (prompt: string, history?: Content[]) => {
   });
 
   const result = await chatSession.sendMessage(prompt);
-  addTrainingPlan(JSON.parse(result.response.text()).plan);
-
-  const response = result.response;
-  const text = response.text();
-  return text;
+  const jsonResult = JSON.parse(result.response.text()) as Plan
+  
+  return jsonResult
 };

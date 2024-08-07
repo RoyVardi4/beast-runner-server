@@ -11,3 +11,23 @@ export interface UserFitnessData {
   moveMinuets?: number;
   heartPoints?: number;
 }
+
+export interface UserPreferences {
+  userRunningLevel?: string;
+  userRunningGoal?: string;
+  startDate?: Date;
+  endDate?: Date;
+}
+export interface Plan {
+  plan: WeeklyPlan[];
+}
+
+export interface WeeklyPlan {
+  days: Workout[];
+  week: number;
+}
+
+export interface Workout {
+  date: Date | string;
+  workout: string;
+}
