@@ -2,25 +2,25 @@ import express from 'express';
 // import logger from '../utils/logger';
 import { generatePlan, getPlan, getWorkout, updatePlan } from '../handlers/plan';
 import { deleteNotification, getNotifications, getNotificationsNumber } from '../handlers/notifications';
+import authMiddleware from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
 /* GET home page. */
 router.get('/', (_, res) => res.send("Welcome to Beast Runner server!!!"));
 
-router.post('/generatePlan', generatePlan);
+router.post('/generatePlan', authMiddleware, generatePlan);
 
-router.get('/getPlan', getPlan); //todo need to get user id from the request via authentication
+router.get('/getPlan', authMiddleware, getPlan); //todo need to get user id from the request via authentication
 
-router.post('/updatePlan', updatePlan); //todo need to get user id from the request via authentication
+router.post('/updatePlan', authMiddleware, updatePlan); //todo need to get user id from the request via authentication
 
-router.get('/getWorkout', getWorkout) //todo need to get user id from the request via authentication
+router.get('/getWorkout', authMiddleware, getWorkout)
 
-router.get('/getNotifications', getNotifications) //todo need to get user id from the request via authentication
- 
-router.get('/deleteNotification', deleteNotification) //todo need to get user id from the request via authentication
+router.get('/getNotifications', authMiddleware, getNotifications)
 
-router.get('/getNotificationsNumber', getNotificationsNumber) //todo need to get user id from the request via authentication
+router.get('/deleteNotification', authMiddleware, deleteNotification)
 
+router.get('/getNotificationsNumber', authMiddleware, getNotificationsNumber) //todo need to get user id from the request via authentication
 
 export default router;

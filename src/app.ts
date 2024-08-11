@@ -11,6 +11,7 @@ dotenv.config();
 import { handleError } from './helpers/error';
 import httpLogger from './middlewares/httpLogger';
 import router from './routes';
+import authRoute from "./routes/authRoute";
 
 const DB_URI = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@beastrunner.gq6tmka.mongodb.net/beast_runner`;
 connect(DB_URI)
@@ -25,6 +26,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+
+app.use("/auth", authRoute);
 app.use('/', router);
 
 // catch 404 and forward to error handler
