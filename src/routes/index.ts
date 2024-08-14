@@ -1,7 +1,7 @@
 import express from 'express';
 // import logger from '../utils/logger';
 import { generatePlan, getPlan, getWorkout, updatePlan } from '../handlers/plan';
-import { deleteNotification, getNotifications } from '../handlers/notifications';
+import { deleteNotification, getNotifications, getNotificationsNumber } from '../handlers/notifications';
 import authMiddleware from "../middlewares/authMiddleware";
 
 const router = express.Router();
@@ -20,5 +20,7 @@ router.get('/getWorkout', authMiddleware, getWorkout)
 router.get('/getNotifications', authMiddleware, getNotifications)
 
 router.get('/deleteNotification', authMiddleware, deleteNotification)
+
+router.get('/getNotificationsNumber', authMiddleware, getNotificationsNumber) //todo need to get user id from the request via authentication
 
 export default router;
