@@ -108,11 +108,9 @@ export const getWorkout = async (req: Request, res: Response) => {
 
 export const setUserData = async (req: AuthRequest, res: Response) => {
   console.log('saving user data...');
-  console.log(req.user?._id, 'req.user?._id')
   try {
     const response = await User.updateOne({ _id: req.user?._id }, { userPreferences: req.body.userPreferences });
-    console.info('response!!!', response)
-    return res.json(response);
+    return res.json(!!response.modifiedCount);
   } catch (error) {
     res.status(500).send(error);
   }
