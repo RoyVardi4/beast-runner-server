@@ -13,6 +13,8 @@ export interface UserFitnessData {
 }
 
 export interface UserPreferences {
+  gender: Gender;
+  age: string;
   userRunningLevel?: string;
   userRunningGoal?: string;
   startDate?: Date;

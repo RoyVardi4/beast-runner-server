@@ -29,10 +29,10 @@ export const generatePlan = async (req: AuthRequest, res: Response) => {
   };
 
   // Google Fit data
-  addDetail('Gender', userFitnessData.gender);
+  addDetail('Gender', userPreferences.gender);
   addDetail('Weight', userFitnessData.weight);
   addDetail('Height', userFitnessData.height);
-  addDetail('Age', userFitnessData.age);
+  addDetail('Age', userPreferences.age);
 
   // Prefrences
   addDetail('My Goal is', userPreferences.userRunningGoal);
@@ -41,7 +41,7 @@ export const generatePlan = async (req: AuthRequest, res: Response) => {
   addDetail('The plan should end on', userPreferences.endDate);
 
   prompt += `The plan should specify what to do in each day until the race.`;
-
+  console.log('prompt', prompt)
   const plan = (await geminiChat(prompt))?.plan;
 
   try {
@@ -81,7 +81,6 @@ export const getPlan = async (req: AuthRequest, res: Response) => {
 
 export const updatePlan = async (req: Request, res: Response) => {
   logger.info('Updating plan...');
-  console.log(req.body);
 
   try {
     const plan = await WorkoutPlan.findOneAndUpdate({ user_id: 'Adi' }, { plan: req.body.updatedPlan }, { new: true }); //todo insert here the real id
@@ -106,3 +105,16 @@ export const getWorkout = async (req: Request, res: Response) => {
     res.status(500).send(error);
   }
 };
+
+export const setUserData = async (req: AuthRequest, res: Response) => {
+  console.log('saving user data...');
+  console.log(req.user?._id, 'req.user?._id')
+  try {
+    const response = await User.updateOne({ _id: req.user?._id }, { userPreferences: req.body.userPreferences });
+    console.info('response!!!', response)
+    return res.json(response);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
