@@ -1,6 +1,6 @@
 import express from 'express';
 // import logger from '../utils/logger';
-import { generatePlan, getPlan, getWorkout, updatePlan } from '../handlers/plan';
+import { generatePlan, getPlan, getWorkout, setUserData, updatePlan } from '../handlers/plan';
 import { deleteNotification, getNotifications, getNotificationsNumber } from '../handlers/notifications';
 import authMiddleware from "../middlewares/authMiddleware";
 
@@ -22,5 +22,7 @@ router.get('/getNotifications', authMiddleware, getNotifications)
 router.get('/deleteNotification', authMiddleware, deleteNotification)
 
 router.get('/getNotificationsNumber', authMiddleware, getNotificationsNumber)
+
+router.post('/setUserData', authMiddleware, setUserData)
 
 export default router;
