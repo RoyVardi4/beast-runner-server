@@ -21,6 +21,6 @@ router.get('/getNotifications', authMiddleware, getNotifications)
 
 router.get('/deleteNotification', authMiddleware, deleteNotification)
 
-router.get('/getNotificationsNumber', authMiddleware, getNotificationsNumber) //todo need to get user id from the request via authentication
+router.get('/getNotificationsNumber', authMiddleware, getNotificationsNumber)
 
 export default router;
