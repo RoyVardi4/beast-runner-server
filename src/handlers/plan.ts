@@ -3,14 +3,16 @@ import logger from '../utils/logger';
 import { geminiChat } from '../utils/gemini';
 import { UserFitnessData, UserPreferences } from '../types/UserFitnessData';
 import WorkoutPlan from '../db_schema/workPlan';
+import User from '../models/userModel';
 import { formatDBDate } from '../utils/DateFormatter';
+import { AuthRequest } from 'src/middlewares/authMiddleware';
 
 interface PlanInput {
   userFitnessData: UserFitnessData;
   userPreferences: UserPreferences;
 }
 
-export const generatePlan = async (req: Request, res: Response) => {
+export const generatePlan = async (req: AuthRequest, res: Response) => {
   logger.info('Gnerating plan...');
 
   console.log(req.body);
@@ -27,10 +29,10 @@ export const generatePlan = async (req: Request, res: Response) => {
   };
 
   // Google Fit data
-  addDetail('Gender', userFitnessData.gender);
+  addDetail('Gender', userPreferences.gender);
   addDetail('Weight', userFitnessData.weight);
   addDetail('Height', userFitnessData.height);
-  addDetail('Age', userFitnessData.age);
+  addDetail('Age', userPreferences.age);
 
   // Prefrences
   addDetail('My Goal is', userPreferences.userRunningGoal);
@@ -39,12 +41,23 @@ export const generatePlan = async (req: Request, res: Response) => {
   addDetail('The plan should end on', userPreferences.endDate);
 
   prompt += `The plan should specify what to do in each day until the race.`;
-
+  console.log('prompt', prompt)
   const plan = (await geminiChat(prompt))?.plan;
+
   try {
+    const userId = req.user?._id;
+
+    // update user prefrences 
+    await User.findByIdAndUpdate(userId, {
+      goal: userPreferences.userRunningGoal,
+      level: userPreferences.userRunningLevel,
+      planStartDate: userPreferences.startDate,
+      planEndDate: userPreferences.endDate,
+    });
+
     const newPlan = new WorkoutPlan({
       plan: plan,
-      user_id: 'Roy', // TODO: change to actual user
+      user_id: userId,
       lut: new Date(),
     });
     const savedPlan = await newPlan.save();
@@ -54,9 +67,13 @@ export const generatePlan = async (req: Request, res: Response) => {
   }
 };
 
-export const getPlan = async (_: Request, res: Response) => {
+export const getPlan = async (req: AuthRequest, res: Response) => {
   try {
-    return res.json(await WorkoutPlan.findOne({ user_id: 'Adi' })); //todo insert here the real id
+    if (req.user?._id) {
+      return res.json(await WorkoutPlan.findOne({ user_id: req.user?._id })); //todo insert here the real id
+    } else {
+      return res.status(404).json("missing user id")
+    }
   } catch (error) {
     res.status(500).send(error);
   }
@@ -64,7 +81,6 @@ export const getPlan = async (_: Request, res: Response) => {
 
 export const updatePlan = async (req: Request, res: Response) => {
   logger.info('Updating plan...');
-  console.log(req.body);
 
   try {
     const plan = await WorkoutPlan.findOneAndUpdate({ user_id: 'Adi' }, { plan: req.body.updatedPlan }, { new: true }); //todo insert here the real id
@@ -76,14 +92,27 @@ export const updatePlan = async (req: Request, res: Response) => {
 
 export const getWorkout = async (req: Request, res: Response) => {
   try {
-    return res.json(await WorkoutPlan.aggregate([
-      { $match: { user_id: 'Roy' } },
-      { $unwind: '$plan' },
-      { $unwind: '$plan.days' },
-      { $match: { 'plan.days.date': formatDBDate(new Date(req.query.date + '')) } },
-      { $project: { workout: '$plan.days.workout' } },
-    ]));
+    return res.json(
+      await WorkoutPlan.aggregate([
+        { $match: { user_id: 'Roy' } },
+        { $unwind: '$plan' },
+        { $unwind: '$plan.days' },
+        { $match: { 'plan.days.date': formatDBDate(new Date(req.query.date + '')) } },
+        { $project: { workout: '$plan.days.workout' } },
+      ]),
+    );
   } catch (error) {
     res.status(500).send(error);
   }
 };
+
+export const setUserData = async (req: AuthRequest, res: Response) => {
+  console.log('saving user data...');
+  try {
+    const response = await User.updateOne({ _id: req.user?._id }, { userPreferences: req.body.userPreferences });
+    return res.json(!!response.modifiedCount);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
