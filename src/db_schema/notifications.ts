@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { WorkoutSchema } from './workPlan';
 const Schema = mongoose.Schema;
 
 const NotificationsSchema = new Schema({
@@ -7,7 +8,7 @@ const NotificationsSchema = new Schema({
     required: true
   },
   workout: {
-    type: String,
+    type: WorkoutSchema,
     required: true
   },
   is_seen: {

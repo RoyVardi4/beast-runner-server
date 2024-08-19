@@ -1,6 +1,25 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
+export const WorkoutSchema = new Schema({
+  title: {
+    type: String,
+    required: true
+  },
+  distance: {
+    type: String,
+    required: true
+  },
+  workoutTime: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  }
+});
+
 // Define Day schema
 const DaySchema = new Schema({
   date: {
@@ -8,7 +27,7 @@ const DaySchema = new Schema({
     required: true
   },
   workout: {
-    type: String,
+    type: WorkoutSchema,
     required: true
   },
   difficultyFeedback: {
