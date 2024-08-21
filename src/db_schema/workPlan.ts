@@ -7,11 +7,11 @@ export const WorkoutSchema = new Schema({
     required: true
   },
   distance: {
-    type: String,
+    type: Number,
     required: true
   },
   workoutTime: {
-    type: String,
+    type: Number,
     required: true
   },
   description: {

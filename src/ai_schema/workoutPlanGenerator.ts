@@ -25,10 +25,10 @@ const schema = `
                       "type": "string"
                     },
                     "distance": {
-                      "type": "string"
+                      "type": "number"
                     },
                     "workoutTime": {
-                      "type": "string"
+                      "type": "number"
                     },
                     "description": {
                       "type": "string"
