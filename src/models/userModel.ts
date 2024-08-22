@@ -5,7 +5,7 @@ export interface UserData {
     _id?: string;
     email: string;
     refreshTokens?: string[];
-    userPreferences: UserPreferences;
+    userPreferences?: UserPreferences;
 }
 
 const userPreferencesSchema = new mongoose.Schema<UserPreferences>({
@@ -46,7 +46,7 @@ const userSchema = new mongoose.Schema<UserData>({
     },
     userPreferences: {
         type: userPreferencesSchema,
-        required: true,
+        required: false,
     }
 });
 
