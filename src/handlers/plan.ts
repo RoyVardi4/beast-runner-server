@@ -3,7 +3,7 @@ import logger from '../utils/logger';
 import { geminiChat } from '../utils/gemini';
 import { UserFitnessData, UserPreferences } from '../types/UserFitnessData';
 import WorkoutPlan from '../db_schema/workPlan';
-import User from '../models/userModel';
+import User, {UserData} from '../models/userModel';
 import { formatDBDate } from '../utils/DateFormatter';
 import { AuthRequest } from 'src/middlewares/authMiddleware';
 
@@ -55,12 +55,21 @@ export const generatePlan = async (req: AuthRequest, res: Response) => {
       planEndDate: userPreferences.endDate,
     });
 
-    const newPlan = new WorkoutPlan({
-      plan: plan,
-      user_id: userId,
-      lut: new Date(),
-    });
-    const savedPlan = await newPlan.save();
+    // const newPlan = new WorkoutPlan({
+    //   plan: plan,
+    //   user_id: userId,
+    //   lut: new Date(),
+    // });
+    // const savedPlan = await newPlan.save();
+    const savedPlan = await WorkoutPlan.findOneAndUpdate(
+        { user_id: userId }, // Find the existing plan by user ID
+        {
+          plan: plan,
+          lut: new Date(),
+        },
+        {includeResultMetadata: true, lean: true, new: true, upsert: true } // Create a new plan if none exists (upsert), and return the updated document
+    );
+
     return res.json(savedPlan);
   } catch (error) {
     return res.status(500).send(error);
@@ -111,6 +120,16 @@ export const setUserData = async (req: AuthRequest, res: Response) => {
   try {
     const response = await User.updateOne({ _id: req.user?._id }, { userPreferences: req.body.userPreferences });
     return res.json(!!response.modifiedCount);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+export const getUserData = async (req: AuthRequest, res: Response) => {
+  console.log('fetching user data...');
+  try {
+    const response = await User.findById({ _id: req.user?._id }) as UserData;
+    return res.json(response.userPreferences);
   } catch (error) {
     res.status(500).send(error);
   }
