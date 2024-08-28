@@ -48,11 +48,13 @@ export const generatePlan = async (req: AuthRequest, res: Response) => {
     const userId = req.user?._id;
 
     // update user prefrences 
-    await User.findByIdAndUpdate(userId, {
-      goal: userPreferences.userRunningGoal,
-      level: userPreferences.userRunningLevel,
-      planStartDate: userPreferences.startDate,
-      planEndDate: userPreferences.endDate,
+    await User.updateOne({_id: userId}, {
+      userPreferences: {
+        goal: userPreferences.userRunningGoal,
+        level: userPreferences.userRunningLevel,
+        planStartDate: userPreferences.startDate,
+        planEndDate: userPreferences.endDate
+      }
     });
 
     const newPlan = new WorkoutPlan({
@@ -79,12 +81,47 @@ export const getPlan = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const updatePlan = async (req: Request, res: Response) => {
+export const updatePlan = async (req: AuthRequest, res: Response) => {
   logger.info('Updating plan...');
-
   try {
-    const plan = await WorkoutPlan.findOneAndUpdate({ user_id: 'Adi' }, { plan: req.body.updatedPlan }, { new: true }); //todo insert here the real id
-    return res.json(plan);
+    if (req.user?._id) {
+      const plan = await WorkoutPlan.findOneAndUpdate({ user_id: req.user?._id }, { plan: req.body.updatedPlan }, { new: true });
+
+      const NUMBER_OF_HARD_WORKOUTS_FOR_REPLAN = 2;
+      const NUMBER_OF_LATS_WORKOUTS_TO_CHECK_FOR_REPLAN = 3;
+      let rePlan = 0;
+      const feedbackWorkouts = plan?.plan.flatMap(week => week.days)?.filter(workout => workout.difficultyFeedback);
+      if(feedbackWorkouts) {
+        let hardWorkouts = 0;
+        for(let i = feedbackWorkouts.length - 1; i >= 0 && i >= feedbackWorkouts.length - NUMBER_OF_LATS_WORKOUTS_TO_CHECK_FOR_REPLAN; i--) {
+          if(feedbackWorkouts[i].difficultyFeedback === 4 || feedbackWorkouts[i].difficultyFeedback === 5)
+            hardWorkouts++;
+        }
+        if(hardWorkouts >= NUMBER_OF_HARD_WORKOUTS_FOR_REPLAN)
+          rePlan = 1;
+      }
+      console.log("rePlan: " + rePlan);
+
+      return res.json({
+        updatedPlan: plan,
+        rePlanNeeded: rePlan
+      });
+    } else {
+      return res.status(404).json("missing user id")
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+export const rePlanWorkoutPlan = async (req: AuthRequest, res: Response) => {
+  try {
+    if (req.user?._id) {
+      console.log("ReAdjust plan! rePlanValue: " + req.body.rePlanValue);
+      return res.json(await WorkoutPlan.findOne({ user_id: req.user?._id }));
+    } else {
+      return res.status(404).json("missing user id")
+    }
   } catch (error) {
     res.status(500).send(error);
   }
