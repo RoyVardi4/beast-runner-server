@@ -72,7 +72,7 @@ export const generatePlan = async (req: AuthRequest, res: Response) => {
 export const getPlan = async (req: AuthRequest, res: Response) => {
   try {
     if (req.user?._id) {
-      return res.json(await WorkoutPlan.findOne({ user_id: req.user?._id })); //todo insert here the real id
+      return res.json(await WorkoutPlan.findOne({ user_id: req.user?._id }));
     } else {
       return res.status(404).json("missing user id")
     }

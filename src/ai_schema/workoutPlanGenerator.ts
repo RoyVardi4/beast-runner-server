@@ -19,7 +19,22 @@ const schema = `
                   "type": "string"
                 },
                 "workout": {
-                  "type": "string"
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "distance": {
+                      "type": "number"
+                    },
+                    "workoutTime": {
+                      "type": "number"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["title", "distance", "workoutTime", "description"]
                 }
               },
               "required": ["workout", "date"]
