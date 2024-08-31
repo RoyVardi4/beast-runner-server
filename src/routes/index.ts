@@ -1,6 +1,6 @@
 import express from 'express';
 // import logger from '../utils/logger';
-import {generatePlan, getPlan, getUserData, getWorkout, setUserData, updatePlan} from '../handlers/plan';
+import {generatePlan, getPlan, getUserData, getWorkout, rePlanWorkoutPlan, setUserData, updatePlan} from '../handlers/plan';
 import { deleteNotification, getNotifications, getNotificationsNumber } from '../handlers/notifications';
 import authMiddleware from "../middlewares/authMiddleware";
 
@@ -14,6 +14,8 @@ router.post('/generatePlan', authMiddleware, generatePlan);
 router.get('/getPlan', authMiddleware, getPlan); //todo need to get user id from the request via authentication
 
 router.post('/updatePlan', authMiddleware, updatePlan); //todo need to get user id from the request via authentication
+
+router.post('/rePlan', authMiddleware, rePlanWorkoutPlan);
 
 router.get('/getWorkout', authMiddleware, getWorkout)
 
